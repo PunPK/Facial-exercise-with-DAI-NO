@@ -344,9 +344,6 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
 
             # Print the DataFrame
             print(df)
-            print("-------------------------------------------")
-            print("-------close AI_FallingAsleepDriving-------")
-            print("-------------------------------------------")
             break
 
 cv.destroyAllWindows()
