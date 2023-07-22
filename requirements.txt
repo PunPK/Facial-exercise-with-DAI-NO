@@ -4,5 +4,5 @@ opencv-python-headless
 Pillow
 streamlit
 temp
-mediapipe 0.10.2
+mediapipe == 0.10.2
 time
