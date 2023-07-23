@@ -6,7 +6,6 @@ import utils, math
 import pandas as pd
 # Fast Ai
 from fastbook import *
-import PIL
 
 # variables 
 frame_counter = 0
@@ -41,14 +40,12 @@ def landmarksDetection(img, results, draw=False):
     # Returning the list of tuples for each landmark 
     return mesh_coord
 
-# Euclaidean distance 
 def euclaideanDistance(point, point1):
     x, y = point
     x1, y1 = point1
     distance = math.sqrt((x1 - x)**2 + (y1 - y)**2)
     return distance
-    
-# FACE detection function 
+
 def detectFACE(img, landmarks, FACE):
     # FACE coordinates
     FACE_points = [landmarks[idx] for idx in FACE]
@@ -220,22 +217,9 @@ reTOTAL_BLINKS = 0
 # constants
 reCLOSED_EYES_FRAME = 3
 
-# Data list for storing results
-data = []
-
-Blinks_right_start = 20
-Blinks_left_start = 20
-Yawn_start = 15
-
-data.append({'Frame': frame_counter, 'Blinks_right': Blinks_right_start, 'Blinks_left': Blinks_left_start, 'Yawns': Yawn_start})
 video = cv2.VideoCapture(0)
 with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5) as face_mesh:
     start_time = time.time()
-    start_time_right = time.time()
-    start_time_left = time.time()
-    start_blink_time = time.time()
-    start_yawn_time = time.time()
-    start_n = time.time()
     frame_count = 0          
 
     # Starting video loop
@@ -258,9 +242,6 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
 
         if results.multi_face_landmarks:
           mesh_coords = landmarksDetection(frame, results, False)
-            # Eye and yawn detection
-            #gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-            #detectEyes(frame, gray)
           reface,center = detectFACE(frame, mesh_coords, FACE_OVAL)
           reEYE,leEYE = detecteye(frame, mesh_coords, RIGHT_EYE, LEFT_EYE)
           reYawn = detectYawn(frame, mesh_coords,LIPS)
@@ -320,11 +301,10 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
 
         frame = utils.textWithBackground(frame, f'FPS : {round(fps,1)}', FONTS, 1.0, (30, 50), bgOpacity=0.9, textThickness=2)
         frame = utils.textWithBackground(frame, f'FACE : {re_face}', FONTS, 1.0, (30, 100), bgOpacity=0.9, textThickness=2)
-        #frame = utils.textWithBackground(frame, f'Sound : {Sound}', FONTS, 1.0, (30, 250), bgOpacity=0.9, textThickness=2)
         frame = utils.textWithBackground(frame, "Elapsed Time: {:02d}:{:02d}".format(int(minutes), int(seconds)), FONTS, 0.5, (10, 495), bgOpacity=0.45, textThickness=1)
         frame = utils.textWithBackground(frame, f"Press the 'q' or 'Q' button to close the program", FONTS, 0.5, (10, 525), bgOpacity=0.45, textThickness=1)
 
-        cv.imshow('AI_FallingAsleepDriving',frame)
+        cv.imshow('ExFace&Exercise_with_AIgame',frame)
 
         key = cv.waitKey(2)
         if key == ord('q') or key == ord('Q') :
