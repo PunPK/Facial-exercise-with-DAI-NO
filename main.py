@@ -220,6 +220,7 @@ reCLOSED_EYES_FRAME = 3
 video = cv2.VideoCapture(0)
 with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5) as face_mesh:
     start_time = time.time()
+    start_n = time.time()
     frame_count = 0          
 
     # Starting video loop
@@ -308,22 +309,7 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
 
         key = cv.waitKey(2)
         if key == ord('q') or key == ord('Q') :
-            # Store data
-            data.append({'Frame': frame_counter, 'Blinks_right': blink_right_counter, 'Blinks_left': blink_left_counter, 'Yawns': re_yawn_counter})
-            data.append({
-                'Frame': frame_counter,
-                'Blinks_right': '{:.2f}%'.format(blink_right_counter / Blinks_right_start * 100),
-                'Blinks_left': '{:.2f}%'.format(blink_left_counter / Blinks_left_start * 100),
-                'Yawns': '{:.2f}%'.format(re_yawn_counter / Yawn_start * 100)
-                })
-            # Create a DataFrame from the data list
-            df = pd.DataFrame(data)
-            df = df.rename(index={0: "Start"})
-            df = df.rename(index={1: "Work"})
-            df = df.rename(index={2: "Summarize"})
 
-            # Print the DataFrame
-            print(df)
             break
 
 cv.destroyAllWindows()
