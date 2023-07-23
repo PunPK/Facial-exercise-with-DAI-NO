@@ -277,9 +277,9 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
                     leCEF_COUNTER = 0
 
             if reYawn > 150 :
-                re_yawn = "Yawn"
+                re_yawn = "open mouth"
             else:
-                re_yawn = "No Yawn"
+                re_yawn = "close mouth"
 
             if center <= -50 :
                 frame = utils.textWithBackground(frame, f'Left : {center}', FONTS, 1.0, (30, 300), bgOpacity=0.9, textThickness=2)
@@ -290,11 +290,11 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
 
             frame = utils.textWithBackground(frame, f'Eye right : {re_right}', FONTS, 1.0, (30, 150), bgOpacity=0.9, textThickness=2)
             frame = utils.textWithBackground(frame, f'Eye left  : {re_left}', FONTS, 1.0, (30, 200), bgOpacity=0.9, textThickness=2)
-            frame = utils.textWithBackground(frame, f'Yawn : {re_yawn}', FONTS, 1.0, (30, 250), bgOpacity=0.9, textThickness=2)
+            frame = utils.textWithBackground(frame, f'Mouth : {re_yawn}', FONTS, 1.0, (30, 250), bgOpacity=0.9, textThickness=2)
             frame = utils.textWithBackground(frame, f'Re Face : {reface}', FONTS, 0.5, (650, 50), bgOpacity=0.45, textThickness=1)
             frame = utils.textWithBackground(frame, f'Re eye right : {reEYE}', FONTS, 0.5, (650, 100), bgOpacity=0.45, textThickness=1)
             frame = utils.textWithBackground(frame, f'Re eye left : {leEYE}', FONTS, 0.5, (650, 150), bgOpacity=0.45, textThickness=1)
-            frame = utils.textWithBackground(frame, f'Re Yawn : {reYawn}', FONTS, 0.5, (650, 200), bgOpacity=0.45, textThickness=1)
+            frame = utils.textWithBackground(frame, f'Re Mouth : {reYawn}', FONTS, 0.5, (650, 200), bgOpacity=0.45, textThickness=1)
 
         # Calculate frame per second (FPS)
         end_time = time.time() - start_time
