@@ -4,6 +4,8 @@ import mediapipe as mp
 import time
 import utils, math
 import pandas as pd
+from pynput.keyboard import Key,Controller
+keyboard = Controller()
 # Fast Ai
 from fastbook import *
 
@@ -216,6 +218,7 @@ reCEF_COUNTER = 0
 reTOTAL_BLINKS = 0
 # constants
 reCLOSED_EYES_FRAME = 3
+key = 0
 
 video = cv2.VideoCapture(0)
 with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5) as face_mesh:
@@ -261,25 +264,36 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
             if reEYE > 4.7 :
                 re_right = "close eye"
                 reCEF_COUNTER += 1
+                key = 1
             else:
                 re_right = "open eye"
                 if reCEF_COUNTER > reCLOSED_EYES_FRAME:
                     reTOTAL_BLINKS += 1
                     reCEF_COUNTER = 0
 
-            if leEYE > 4.7 :
+            if leEYE > 4.7 :                                                      
                 leCEF_COUNTER += 1
                 re_left = "close eye"
+                key = 1                         
             else:
                 re_left = "open eye"
                 if leCEF_COUNTER > leCLOSED_EYES_FRAME:
                     leTOTAL_BLINKS += 1
-                    leCEF_COUNTER = 0
+                    leCEF_COUNTER = 0             
 
             if reYawn > 150 :
+                key = 2
                 re_yawn = "open mouth"
-            else:
+                keyboard.press(Key.down)                      
+            else: 
                 re_yawn = "close mouth"
+                keyboard.release(Key.down)
+
+            if key == 2 :
+                key = 0
+            elif key == 1 :
+                keyboard.press(Key.space)
+                keyboard.release(Key.space)
 
             if center <= -50 :
                 frame = utils.textWithBackground(frame, f'Left : {center}', FONTS, 1.0, (30, 300), bgOpacity=0.9, textThickness=2)
