@@ -88,7 +88,7 @@ def detectFACE(img, landmarks, FACE):
     cv.rectangle(img, (FACE_x_min, FACE_y_min), (FACE_x_max, FACE_y_max), utils.GREEN, 2)
 
     return re_face,distance_x
-
+ 
 def detecteye(img, landmarks, right_indices, left_indices):
 
     # Right eye
