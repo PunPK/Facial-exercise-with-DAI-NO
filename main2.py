@@ -3,7 +3,6 @@ import cv2 as cv2
 import mediapipe as mp
 import time
 import utils, math
-import pandas as pd
 from pynput.keyboard import Key,Controller
 keyboard = Controller()
 # Fast Ai
@@ -209,7 +208,7 @@ close_eye_right_counter = 0
 close_eye_left = 0
 close_eye_left_counter = 0
 # variables 
-frame_counter = 0 
+frame_counter = 0
 leCEF_COUNTER = 0
 leTOTAL_BLINKS = 0
 # constants
