@@ -5,6 +5,7 @@ import time
 import utils, math
 from pynput.keyboard import Key,Controller
 keyboard = Controller()
+import PIL
 # Fast Ai
 from fastbook import *
 
@@ -160,8 +161,44 @@ def detecteye(img, landmarks, right_indices, left_indices):
     eye_left_y_min -= width_increase
     eye_left_y_max += width_increase
 
-    re_right_m = reRatio
-    re_left_m = leRatio
+    if eye_right_x_min >= 0 and eye_right_y_min >= 0 and (eye_right_x_max - eye_right_x_min) > 0 and (eye_right_y_max - eye_right_y_min) > 0:
+        # Draw rectangle around left eye
+        cv.rectangle(img, (eye_right_x_min, eye_right_y_min), (eye_right_x_max, eye_right_y_max), utils.GREEN, 2)
+
+        # Crop eye regions from the image based on the rectangles
+        eye_right_image = img[eye_right_y_min:eye_right_y_max, eye_right_x_min:eye_right_x_max]
+
+        try:
+            # Perform prediction on cropped eye regions
+            re_right = learn_inf_eye.predict(eye_right_image)
+            print("Eye right:", re_right)
+            re_right_m = re_right[0]
+        except (ValueError, PIL.Image.DecompressionBombError):
+            # Handle the specific error and return None
+            re_right_m = None
+    else:
+        # Mouth region is not valid, return None or any appropriate value
+        re_right_m = None
+    
+    if eye_left_x_min >= 0 and eye_left_y_min >= 0 and (eye_left_x_max - eye_left_x_min) > 0 and (eye_left_y_max - eye_left_y_min) > 0:
+        # Draw rectangle around left eye
+        cv.rectangle(img, (eye_left_x_min, eye_left_y_min), (eye_left_x_max, eye_left_y_max), utils.GREEN, 2)
+
+        # Crop eye regions from the image based on the rectangles
+        eye_left_image = img[eye_left_y_min:eye_left_y_max, eye_left_x_min:eye_left_x_max]
+
+        try:
+            # Perform prediction on cropped eye regions
+            re_left = learn_inf_eye.predict(eye_left_image)
+            print("Eye left:", re_left)
+            re_left_m = re_left[0]
+        except (ValueError, PIL.Image.DecompressionBombError):
+            # Handle the specific error and return None
+            re_left_m = None
+    else:
+        # Mouth region is not valid, return None or any appropriate value
+        re_left_m = None
+    
 
     return(re_right_m,re_left_m)
 
@@ -189,8 +226,22 @@ def detectYawn(img, landmarks, LIPS):
     cv.rectangle(img, (lips_x_min, lips_y_min), (lips_x_max, lips_y_max), utils.GREEN, 2)
     yeRatio = euclaideanDistance((lips_y_max, lips_y_min), (lips_y_min, lips_y_max))
 
-    re_yawn = yeRatio
-    return re_yawn
+    if lips_x_min >= 0 and lips_y_min >= 0 and (lips_x_max - lips_x_min) > 0 and (lips_y_max - lips_y_min) > 0:
+        # Draw rectangle around lips
+        cv.rectangle(img, (lips_x_min, lips_y_min), (lips_x_max, lips_y_max), utils.GREEN, 2)
+
+        Yawn_image = img[lips_y_min:lips_y_max, lips_x_min:lips_x_max]
+        try:
+            # Perform prediction on cropped mouth region
+            re_yawn = learn_inf_yawn.predict(Yawn_image)
+            print("Yawn: ", re_yawn)
+            return re_yawn[0]
+        except (ValueError, PIL.Image.DecompressionBombError):
+            # Handle the specific error and return None
+            return None
+    else:
+        # Mouth region is not valid, return None or any appropriate value
+        return None
 
 #=================================================Start========================================================================#
 # Variables for counting
@@ -220,6 +271,11 @@ reCLOSED_EYES_FRAME = 3
 key = 0
 
 c = 3
+
+#learn_inf_eye = load_learner('Model\Teye_ModelsfromScratch.pkl')
+learn_inf_eye = load_learner('Model\eye_data_resnet18_fastai.pkl')
+learn_inf_yawn = load_learner('Model\yawn_data_resnet18_fastai.pkl')
+#learn_inf_yawn = load_learner('Model\yawn_ModelsfromScratch.pkl')
 
 video = cv2.VideoCapture(0)
 with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5) as face_mesh:
@@ -262,7 +318,7 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
           else :
             if reface >= 550 :
                 frame = utils.textWithBackground(frame, f"Please move your face go far to the camera.", FONTS, 1, (75, 300), bgOpacity=0.9, textThickness=2)
-            if reEYE > 4.7 :
+            if reEYE == "close eye" :
                 re_right = "close eye"
                 reCEF_COUNTER += 1
                 key = 1
@@ -272,7 +328,7 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
                     reTOTAL_BLINKS += 1
                     reCEF_COUNTER = 0
 
-            if leEYE > 4.7 :                                                      
+            if leEYE == "close eye" :                                                      
                 leCEF_COUNTER += 1
                 re_left = "close eye"
                 key = 1                         
@@ -282,7 +338,7 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
                     leTOTAL_BLINKS += 1
                     leCEF_COUNTER = 0             
 
-            if reYawn > 150 :
+            if re_yawn == 'yawn':
                 key = 2
                 re_yawn = "open mouth"
                 keyboard.press(Key.down)                      
