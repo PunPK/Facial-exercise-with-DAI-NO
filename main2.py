@@ -1,8 +1,18 @@
+
 import cv2 as cv
 import cv2 as cv2
 import mediapipe as mp
 import time
 import utils, math
+import numpy as np
+import keyboard
+import pandas as pd
+# Fast Ai
+from fastbook import *
+from glob import glob
+from pathlib import Path
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score, roc_auc_score
+import pathlib
 from pynput.keyboard import Key,Controller
 keyboard = Controller()
 import PIL
@@ -18,6 +28,20 @@ CLOSED_EYES_FRAME = 3
 start = 0
 end = 0
 ch = 0
+
+def conv2(ni, nf): return ConvLayer(ni, nf, stride=2)
+
+class ResBlock(Module):
+  def __init__(self, nf):
+    self.conv1 = ConvLayer(nf, nf)
+    self.conv2 = ConvLayer(nf, nf)
+  
+  def forward(self, x): return x + self.conv2(self.conv1(x))
+
+def conv_and_res(ni, nf): return nn.Sequential(conv2(ni, nf), ResBlock(nf))
+
+temp = pathlib.PosixPath
+pathlib.PosixPath = pathlib.WindowsPath
 
 FONTS = cv.FONT_HERSHEY_COMPLEX
 
@@ -338,7 +362,7 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
                     leTOTAL_BLINKS += 1
                     leCEF_COUNTER = 0             
 
-            if re_yawn == 'yawn':
+            if reYawn == 'yawn':
                 key = 2
                 re_yawn = "open mouth"
                 keyboard.press(Key.down)                      
