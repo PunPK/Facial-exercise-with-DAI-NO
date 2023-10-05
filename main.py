@@ -361,7 +361,6 @@ if start == 1 :
     video.release()
 
 def Conclude_mode(TL,TR,TY,TEM,TES) :
-
     image = Image.open("LOGO.jpg")
     photo = ImageTk.PhotoImage(image)
     label = tk.Label(window, image=photo)
@@ -369,13 +368,13 @@ def Conclude_mode(TL,TR,TY,TEM,TES) :
     window.geometry("800x600")
     text_label = tk.Label(window, text= " " , font=("Helvetica", 24))
     text_label.pack()
-    text_label = tk.Label(window, text= f"จำนวนการกระพริบตา ซ้าย ทั้งหมด {TL} ครั้ง" , font=("Helvetica", 24), padx=10)
+    text_label = tk.Label(window, text= f"จำนวนการกระพริบตา ซ้าย ทั้งหมด {TL} ครั้ง" , font=("Helvetica", 24), anchor="w" , padx=10)
     text_label.pack()
-    text_label = tk.Label(window, text= f"จำนวนการกระพริบตา ขวา ทั้งหมด {TR} ครั้ง" , font=("Helvetica", 24), padx=10)
+    text_label = tk.Label(window, text= f"จำนวนการกระพริบตา ขวา ทั้งหมด {TR} ครั้ง" , font=("Helvetica", 24), anchor="w" , padx=10)
     text_label.pack()
-    text_label = tk.Label(window, text= f"จำนวนการอ้ากปากทั้งหมด {TY} ครั้ง" , font=("Helvetica", 24), padx=10)
+    text_label = tk.Label(window, text= f"จำนวนการอ้ากปากทั้งหมด {TY} ครั้ง" , font=("Helvetica", 24), anchor="w" , padx=10)
     text_label.pack()
-    text_label = tk.Label(window, text= "จำนวนเวลาที่ใช้ไปทั้งหมด {:02d}:{:02d} นาที".format(TEM, TES) , font=("Helvetica", 24), padx=10)
+    text_label = tk.Label(window, text= "จำนวนเวลาที่ใช้ไปทั้งหมด {:02d}:{:02d} นาที".format(TEM, TES) , font=("Helvetica", 24), anchor="w" , padx=10)
     text_label.pack()
 
     if start == 1:
@@ -383,4 +382,4 @@ def Conclude_mode(TL,TR,TY,TEM,TES) :
         return video
     window.mainloop()
 
-Conclude_mode(leTOTAL_BLINKS,reTOTAL_BLINKS,TOTAL_Yawn,int(minutes), int(seconds))  
+Conclude_mode(leTOTAL_BLINKS,reTOTAL_BLINKS,TOTAL_Yawn,int(minutes), int(seconds))
