@@ -307,10 +307,10 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
                 key = 2
                 re_yawn2 = "open mouth"
                 re_yawn = "open mouth"
-                #keyboard.press(Key.down)                      
+                keyboard.press(Key.down)                      
             else: 
                 re_yawn = "close mouth"
-                #keyboard.release(Key.down)
+                keyboard.release(Key.down)
 
             if re_yawn2 == "open mouth" and  re_yawn == "close mouth" :
                 TOTAL_Yawn += 1
@@ -318,9 +318,9 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
 
             if key == 2 :
                 key = 0
-            #elif key == 1 :
-                #keyboard.press(Key.space)
-                #keyboard.release(Key.space)
+            elif key == 1 :
+                keyboard.press(Key.space)
+                keyboard.release(Key.space)
 
             if center <= -50 :
                 frame = utils.textWithBackground(frame, f'Left : {center}', FONTS, 1.0, (30, 300), bgOpacity=0.9, textThickness=2)
@@ -361,21 +361,21 @@ if start == 1 :
     video.release()
 
 def Conclude_mode(TL,TR,TY,TEM,TES) :
-    # เพิ่มรูปภาพหน้าแรก
-    image = Image.open("LOGO.jpg")  # ใส่ชื่อไฟล์รูปภาพที่คุณต้องการใช้
+
+    image = Image.open("LOGO.jpg")
     photo = ImageTk.PhotoImage(image)
     label = tk.Label(window, image=photo)
     label.pack()
     window.geometry("800x600")
     text_label = tk.Label(window, text= " " , font=("Helvetica", 24))
     text_label.pack()
-    text_label = tk.Label(window, text= f"จำนวนการกระพริบตา ซ้าย ทั้งหมด {TL} ครั้ง" , font=("Helvetica", 24), anchor="w" , padx=10)
+    text_label = tk.Label(window, text= f"จำนวนการกระพริบตา ซ้าย ทั้งหมด {TL} ครั้ง" , font=("Helvetica", 24), padx=10)
     text_label.pack()
-    text_label = tk.Label(window, text= f"จำนวนการกระพริบตา ขวา ทั้งหมด {TR} ครั้ง" , font=("Helvetica", 24), anchor="w" , padx=10)
+    text_label = tk.Label(window, text= f"จำนวนการกระพริบตา ขวา ทั้งหมด {TR} ครั้ง" , font=("Helvetica", 24), padx=10)
     text_label.pack()
-    text_label = tk.Label(window, text= f"จำนวนการอ้ากปากทั้งหมด {TY} ครั้ง" , font=("Helvetica", 24), anchor="w" , padx=10)
+    text_label = tk.Label(window, text= f"จำนวนการอ้ากปากทั้งหมด {TY} ครั้ง" , font=("Helvetica", 24), padx=10)
     text_label.pack()
-    text_label = tk.Label(window, text= "จำนวนเวลาที่ใช้ไปทั้งหมด {:02d}:{:02d} นาที".format(TEM, TES) , font=("Helvetica", 24), anchor="w" , padx=10)
+    text_label = tk.Label(window, text= "จำนวนเวลาที่ใช้ไปทั้งหมด {:02d}:{:02d} นาที".format(TEM, TES) , font=("Helvetica", 24), padx=10)
     text_label.pack()
 
     if start == 1:
@@ -383,4 +383,4 @@ def Conclude_mode(TL,TR,TY,TEM,TES) :
         return video
     window.mainloop()
 
-Conclude_mode(leTOTAL_BLINKS,reTOTAL_BLINKS,TOTAL_Yawn,int(minutes), int(seconds))
+Conclude_mode(leTOTAL_BLINKS,reTOTAL_BLINKS,TOTAL_Yawn,int(minutes), int(seconds))  
