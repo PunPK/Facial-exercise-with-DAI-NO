@@ -6,8 +6,11 @@ import utils, math
 import pandas as pd
 from pynput.keyboard import Key,Controller
 keyboard = Controller()
+from PIL import ImageTk
 # Fast Ai
 from fastbook import *
+import tkinter as tk
+import tkinter.filedialog as filedialog
 
 # variables 
 frame_counter = 0
@@ -219,8 +222,16 @@ reTOTAL_BLINKS = 0
 # constants
 reCLOSED_EYES_FRAME = 3
 key = 0
+TOTAL_Yawn = 0
+re_yawn2 = ""
+re_right2 = ""
+re_left2 = ""
 
+aa = 0
 c = 3
+
+window = tk.Tk()
+window.title("Facial exercise with DAI-NO")
 
 video = cv2.VideoCapture(0)
 with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5) as face_mesh:
@@ -265,6 +276,7 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
                 frame = utils.textWithBackground(frame, f"Please move your face go far to the camera.", FONTS, 1, (75, 300), bgOpacity=0.9, textThickness=2)
             if reEYE > 4.7 :
                 re_right = "close eye"
+                re_right2 = "close eye"
                 reCEF_COUNTER += 1
                 key = 1
             else:
@@ -273,29 +285,42 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
                     reTOTAL_BLINKS += 1
                     reCEF_COUNTER = 0
 
+            if re_right2 == "close eye" and  re_right == "open eye" :
+                reTOTAL_BLINKS += 1
+                re_right2 = "open eye"
+
             if leEYE > 4.7 :                                                      
                 leCEF_COUNTER += 1
                 re_left = "close eye"
+                re_left2 = "close eye"
                 key = 1                         
             else:
                 re_left = "open eye"
                 if leCEF_COUNTER > leCLOSED_EYES_FRAME:
-                    leTOTAL_BLINKS += 1
-                    leCEF_COUNTER = 0             
+                    leCEF_COUNTER = 0  
+
+            if re_left2 == "close eye" and  re_left == "open eye" :
+                leTOTAL_BLINKS += 1
+                re_left2 = "open eye"           
 
             if reYawn > 150 :
                 key = 2
+                re_yawn2 = "open mouth"
                 re_yawn = "open mouth"
-                keyboard.press(Key.down)                      
+                #keyboard.press(Key.down)                      
             else: 
                 re_yawn = "close mouth"
-                keyboard.release(Key.down)
+                #keyboard.release(Key.down)
+
+            if re_yawn2 == "open mouth" and  re_yawn == "close mouth" :
+                TOTAL_Yawn += 1
+                re_yawn2 = "close mouth"                
 
             if key == 2 :
                 key = 0
-            elif key == 1 :
-                keyboard.press(Key.space)
-                keyboard.release(Key.space)
+            #elif key == 1 :
+                #keyboard.press(Key.space)
+                #keyboard.release(Key.space)
 
             if center <= -50 :
                 frame = utils.textWithBackground(frame, f'Left : {center}', FONTS, 1.0, (30, 300), bgOpacity=0.9, textThickness=2)
@@ -311,6 +336,10 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
             frame = utils.textWithBackground(frame, f'Re eye right : {reEYE}', FONTS, 0.5, (650, 100), bgOpacity=0.45, textThickness=1)
             frame = utils.textWithBackground(frame, f'Re eye left : {leEYE}', FONTS, 0.5, (650, 150), bgOpacity=0.45, textThickness=1)
             frame = utils.textWithBackground(frame, f'Re Mouth : {reYawn}', FONTS, 0.5, (650, 200), bgOpacity=0.45, textThickness=1)
+            frame = utils.textWithBackground(frame, f'TOTAL Re eye left : {leTOTAL_BLINKS}', FONTS, 0.5, (650, 250), bgOpacity=0.45, textThickness=1)
+            frame = utils.textWithBackground(frame, f'TOTAL Re eye right : {reTOTAL_BLINKS}', FONTS, 0.5, (650, 300), bgOpacity=0.45, textThickness=1)
+            frame = utils.textWithBackground(frame, f'TOTAL Re Mouth : {TOTAL_Yawn}', FONTS, 0.5, (650, 350), bgOpacity=0.45, textThickness=1)
+            
 
         # Calculate frame per second (FPS)
         end_time = time.time() - start_time
@@ -325,9 +354,33 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
 
         key = cv.waitKey(2)
         if key == ord('q') or key == ord('Q') :
-
             break
 
 cv.destroyAllWindows()
 if start == 1 :
     video.release()
+
+def Conclude_mode(TL,TR,TY,TEM,TES) :
+    # เพิ่มรูปภาพหน้าแรก
+    image = Image.open("LOGO.jpg")  # ใส่ชื่อไฟล์รูปภาพที่คุณต้องการใช้
+    photo = ImageTk.PhotoImage(image)
+    label = tk.Label(window, image=photo)
+    label.pack()
+    window.geometry("800x600")
+    text_label = tk.Label(window, text= " " , font=("Helvetica", 24))
+    text_label.pack()
+    text_label = tk.Label(window, text= f"จำนวนการกระพริบตา ซ้าย ทั้งหมด {TL} ครั้ง" , font=("Helvetica", 24), anchor="w" , padx=10)
+    text_label.pack()
+    text_label = tk.Label(window, text= f"จำนวนการกระพริบตา ขวา ทั้งหมด {TR} ครั้ง" , font=("Helvetica", 24), anchor="w" , padx=10)
+    text_label.pack()
+    text_label = tk.Label(window, text= f"จำนวนการอ้ากปากทั้งหมด {TY} ครั้ง" , font=("Helvetica", 24), anchor="w" , padx=10)
+    text_label.pack()
+    text_label = tk.Label(window, text= "จำนวนเวลาที่ใช้ไปทั้งหมด {:02d}:{:02d} นาที".format(TEM, TES) , font=("Helvetica", 24), anchor="w" , padx=10)
+    text_label.pack()
+
+    if start == 1:
+        window.destroy()
+        return video
+    window.mainloop()
+
+Conclude_mode(leTOTAL_BLINKS,reTOTAL_BLINKS,TOTAL_Yawn,int(minutes), int(seconds))
