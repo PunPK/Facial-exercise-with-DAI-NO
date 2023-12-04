@@ -9,8 +9,24 @@ keyboard = Controller()
 from PIL import ImageTk
 # Fast Ai
 from fastbook import *
+from glob import glob
+from pathlib import Path
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score, roc_auc_score
+import pathlib
 import tkinter as tk
 import tkinter.filedialog as filedialog
+
+def conv2(ni, nf): return ConvLayer(ni, nf, stride=2)
+
+class ResBlock(Module):
+  def __init__(self, nf):
+    self.conv1 = ConvLayer(nf, nf)
+    self.conv2 = ConvLayer(nf, nf)
+  
+  def forward(self, x): return x + self.conv2(self.conv1(x))
+
+def conv_and_res(ni, nf): return nn.Sequential(conv2(ni, nf), ResBlock(nf))
+
 
 # variables 
 frame_counter = 0
@@ -21,6 +37,9 @@ CLOSED_EYES_FRAME = 3
 start = 0
 end = 0
 ch = 0
+
+temp = pathlib.PosixPath
+pathlib.PosixPath = pathlib.WindowsPath
 
 FONTS = cv.FONT_HERSHEY_COMPLEX
 
@@ -34,6 +53,11 @@ LEFT_EYE = [362, 382, 381, 380, 374, 373, 390, 249, 263, 466, 388, 387, 386, 385
 RIGHT_EYE = [33, 7, 163, 144, 145, 153, 154, 155, 133, 173, 157, 158, 159, 160, 161, 246]  
 
 map_face_mesh = mp.solutions.face_mesh
+
+#learn_inf_eye = load_learner('Model\Teye_ModelsfromScratch.pkl')
+learn_inf_eye = load_learner('Model\eye_data_resnet18_fastai.pkl')
+learn_inf_yawn = load_learner('Model\yawn_data_resnet18_fastai.pkl')
+#learn_inf_yawn = load_learner('Model\yawn_ModelsfromScratch.pkl')
 
 def landmarksDetection(img, results, draw=False):
     img_height, img_width = img.shape[:2]
@@ -163,6 +187,16 @@ def detecteye(img, landmarks, right_indices, left_indices):
     eye_left_x_max += width_increase
     eye_left_y_min -= width_increase
     eye_left_y_max += width_increase
+    
+    if eye_right_x_min >= 0 and eye_right_y_min >= 0 and (eye_right_x_max - eye_right_x_min) > 0 and (eye_right_y_max - eye_right_y_min) > 0:
+        eye_right_image = img[eye_right_y_min:eye_right_y_max, eye_right_x_min:eye_right_x_max]
+        re_right = learn_inf_eye.predict(eye_right_image)
+        print("Eye right:", re_right)
+    
+    if eye_left_x_min >= 0 and eye_left_y_min >= 0 and (eye_left_x_max - eye_left_x_min) > 0 and (eye_left_y_max - eye_left_y_min) > 0:
+        eye_left_image = img[eye_left_y_min:eye_left_y_max, eye_left_x_min:eye_left_x_max]
+        re_left = learn_inf_eye.predict(eye_left_image)
+        print("Eye left:", re_left)
 
     re_right_m = reRatio
     re_left_m = leRatio
@@ -192,6 +226,10 @@ def detectYawn(img, landmarks, LIPS):
     cv.polylines(img,  [np.array([mesh_coords[p] for p in LIPS ], dtype=np.int32)], True, utils.GREEN, 1, cv.LINE_AA)
     cv.rectangle(img, (lips_x_min, lips_y_min), (lips_x_max, lips_y_max), utils.GREEN, 2)
     yeRatio = euclaideanDistance((lips_y_max, lips_y_min), (lips_y_min, lips_y_max))
+    if lips_x_min >= 0 and lips_y_min >= 0 and (lips_x_max - lips_x_min) > 0 and (lips_y_max - lips_y_min) > 0:
+        Yawn_image = img[lips_y_min:lips_y_max, lips_x_min:lips_x_max]
+        re_yawn = learn_inf_yawn.predict(Yawn_image)
+        print("Yawn: ", re_yawn)
 
     re_yawn = yeRatio
     return re_yawn

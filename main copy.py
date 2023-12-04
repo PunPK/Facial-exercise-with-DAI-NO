@@ -274,7 +274,6 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
           else :
             if reface >= 550 :
                 frame = utils.textWithBackground(frame, f"Please move your face go far to the camera.", FONTS, 1, (75, 300), bgOpacity=0.9, textThickness=2)
-            #if reEYE > 4.7 :
             if reEYE > 4.7 :
                 re_right = "close eye"
                 re_right2 = "close eye"
@@ -290,7 +289,6 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
                 reTOTAL_BLINKS += 1
                 re_right2 = "open eye"
 
-            #if leEYE > 4.7 : 
             if leEYE > 4.7 :                                                      
                 leCEF_COUNTER += 1
                 re_left = "close eye"
@@ -309,10 +307,10 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
                 key = 2
                 re_yawn2 = "open mouth"
                 re_yawn = "open mouth"
-                keyboard.press(Key.down)                      
+                #keyboard.press(Key.down)                      
             else: 
                 re_yawn = "close mouth"
-                keyboard.release(Key.down)
+                #keyboard.release(Key.down)
 
             if re_yawn2 == "open mouth" and  re_yawn == "close mouth" :
                 TOTAL_Yawn += 1
@@ -320,9 +318,9 @@ with map_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidenc
 
             if key == 2 :
                 key = 0
-            elif key == 1 :
-                keyboard.press(Key.space)
-                keyboard.release(Key.space)
+            #elif key == 1 :
+                #keyboard.press(Key.space)
+                #keyboard.release(Key.space)
 
             if center <= -50 :
                 frame = utils.textWithBackground(frame, f'Left : {center}', FONTS, 1.0, (30, 300), bgOpacity=0.9, textThickness=2)
