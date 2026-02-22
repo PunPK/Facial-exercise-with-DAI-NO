@@ -1,0 +1,9 @@
+# Jupyter notebooks
+*.ipynb
+
+# Data folders
+DataAiEye2/
+DataAiyawn/
+
+# Python cache
+__pycache__/
